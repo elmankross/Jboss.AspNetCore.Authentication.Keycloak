@@ -1,110 +1,110 @@
 ﻿using AspNetCore.KeycloakAuthentication.Clients;
-using AspNetCore.KeycloakAuthentication.Configuration;
 using AspNetCore.KeycloakAuthentication.Handlers;
-using AspNetCore.KeycloakAuthentication.Policies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 
 namespace AspNetCore.KeycloakAuthentication
 {
     public static class KeycloakExtensions
     {
-        private static bool _enableGetTokenAuto;
-        private static bool _enableRefreshToken;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="host"></param>
+        /// <returns></returns>
+        public static IWebHostBuilder UseKeycloak(this IWebHostBuilder host)
+        {
+            return host.ConfigureAppConfiguration((_, builder) =>
+            {
+                builder.AddJsonFile(KeycloakClientInstallation.FILE, optional: true);
+            });
+        }
+
 
         /// <summary>
-        /// Agrega y configura la funcionalidad de Autenticación y autorización de Keycloak a un proyecto .NET Core
+        /// 
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="options">Parametro con los valores necesarios para configurar la autenticación de Keycloak.</param>
-        /// <returns>Devuelve una referencia a la instancia después de implementar la autenticación con JWT.</returns>
-        public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services, KeycloakOptions options)
+        /// <param name="configuration"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services,
+            IConfiguration configuration,
+            Action<KeycloakClientInstallation> options = null)
         {
-
-            //Se agrega al contenedor de dependencias el KeycloakClient
-            services.AddSingleton(options);
-            //Se agrega al contenedor las opciones de configuración
-            services.AddHttpClient<IKeycloakClient>(c => c.BaseAddress = new Uri(options.KeycloakUrlRealm))
-                    .AddTypedClient<IKeycloakClient, KeycloakClient>();
-
-            #region PASOS 1 Y 2 (ENVIO Y REFRESCO DE TOKEN)
-
-            if(options.EnableGetTokenAuto || options.EnableRefreshToken)
-            {
-                services.AddHttpContextAccessor();
-                services.AddSession(config => config.Cookie.Name = options.ClientId);
-
-                if (options.EnableGetTokenAuto)
-                {
-                    _enableGetTokenAuto = true;
-                    services.AddTransient<HttpGetTokenAutoHandler>();
-                }
-
-                if (options.EnableRefreshToken)
-                {
-                    _enableRefreshToken = true;
-                }
-            }
-
-            #endregion
-
-            #region PASOS 3 Y 4 (VALIDACION DE TOKEN)
-
-            var validationParameters = new TokenValidationParameters
-            {
-                ClockSkew = options.TokenClockSkew,
-                ValidateAudience = true,
-                ValidateIssuer = true
-            };
+            var installation = new KeycloakClientInstallation();
+            configuration.Bind(installation);
+            options?.Invoke(installation);
+            services.AddSingleton(installation);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(opts =>
+                    .AddJwtBearer(x =>
                     {
-                        opts.Authority = options.KeycloakUrlRealm;
-                        opts.Audience = options.ClientId;
-                        opts.TokenValidationParameters = validationParameters;
-                        opts.RequireHttpsMetadata = false;
-                        opts.SaveToken = true;
+                        x.Authority = installation.Issuer.ToString();
+                        x.SaveToken = true;
+
+                        // TODO: By env
+                        x.RequireHttpsMetadata = false;
+                        x.IncludeErrorDetails = false;
+                        x.RefreshOnIssuerKeyNotFound = false;
+
+                        x.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            RequireSignedTokens = false,
+                            ValidateAudience = false,
+                            ValidateLifetime = true,
+                            ValidateIssuer = true,
+                            ValidIssuer = installation.Issuer.ToString(),
+                            ValidateIssuerSigningKey = true,
+                            TryAllIssuerSigningKeys = true
+                        };
+
+                        x.Validate();
                     });
-
-            services.AddTransient<IAuthorizationHandler, HasRoleHandler>(t => new HasRoleHandler(options.ClientId));
-
-            #endregion
 
             return services;
         }
 
+
         /// <summary>
-        /// Agrega el midleware para el uso de la validación de Json Web Token de Keycloak 
+        /// 
         /// </summary>
-        /// <param name="builder">Para agregar el middleware al app</param>
-        /// <returns>Devuelve una referencia a la instancia después de implementar la autenticación.</returns>
-        public static IApplicationBuilder UseKeycloak(this IApplicationBuilder builder)
+        /// <typeparam name="TClient"></typeparam>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddKeycloakHttpClient<TClient, TImplementation>(this IServiceCollection services,
+            Action<HttpClient> config = null)
+            where TClient : class
+            where TImplementation : class, TClient
         {
-            #region PASOS 1 Y 2 (ENVIO Y REFRESCO DE TOKEN)
+            services.AddSingleton<IKeycloakClient, KeycloakClient>();
+            services.AddTransient<HttpKeycloakAutoSigningHandler>();
+            return services.AddHttpClient<TClient, TImplementation>(x => config?.Invoke(x))
+                           .AddHttpMessageHandler<HttpKeycloakAutoSigningHandler>();
+        }
 
-            if(_enableGetTokenAuto || _enableRefreshToken)
-            {
-                builder.UseSession();
-            }
 
-            #endregion
-            #region PASOS 3 Y 4 (VALIDACION DE TOKEN)
-
-            builder.UseAuthentication();
-            
-            #endregion
-
-            return builder;
-        }        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TImplementation"></typeparam>
+        /// <param name="services"></param>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddKeycloakHttpClient<TImplementation>(this IServiceCollection services,
+            Action<HttpClient> config = null)
+            where TImplementation : class
+        {
+            services.AddSingleton<IKeycloakClient, KeycloakClient>();
+            return services.AddHttpClient<TImplementation>(x => config?.Invoke(x))
+                           .AddHttpMessageHandler<HttpKeycloakAutoSigningHandler>();
+        }
     }
 }

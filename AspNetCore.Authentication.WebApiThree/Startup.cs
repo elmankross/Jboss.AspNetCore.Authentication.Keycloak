@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AspNetCore.KeycloakAuthentication;
-using AspNetCore.KeycloakAuthentication.Configuration;
-using AspNetCore.KeycloakAuthentication.Handlers.Requirements;
-using AspNetCore.KeycloakAuthentication.Policies;
-using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCore.KeycloakAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 
 namespace AspNetCore.Authentication.WebApiThree
 {
@@ -30,39 +19,33 @@ namespace AspNetCore.Authentication.WebApiThree
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var clientId = "microservice-three";
-
-            services.AddKeycloakAuthentication(new KeycloakOptions
-            {
-                ClientId = clientId,
-                Realm = "prueba",
-                KeycloakUrl = "http://artemis:8085/auth/"
-            });
+            services.AddKeycloakAuthentication(Configuration);
 
             services.AddAuthorization(config => {
-                config.AddPolicy("adm", policy => policy.AddRequirements(new IAuthorizationRequirement[] { new HasRoleRequirement("admin") }));
-                config.AddPolicy("test", new KeycloakRoleAuthorizationPolicy("all_access"));
+                config.AddPolicy("adm", policy => policy.RequireRole("admin"));
+                config.AddPolicy("test", policy => policy.RequireClaim("system", "test"));
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                //app.UseHsts();
-            }
 
-            app.UseKeycloak(); //Habilitar la autenticación de Keycloak
-            //app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseAuthentication(); //Habilitar la autenticación de Keycloak
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
         }
     }
 }

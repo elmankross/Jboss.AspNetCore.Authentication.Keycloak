@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AspNetCore.Authentication.WApp.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using AspNetCore.Authentication.WApp.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AspNetCore.Authentication.WApp.Controllers
 {

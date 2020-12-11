@@ -1,0 +1,12 @@
+{
+  "realm": "master",
+  "auth-server-url": "http://localhost:8080/auth/",
+  "ssl-required": "external",
+  "resource": "microservice-one",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "dc7078ca-8643-4c33-b4f5-8051e3166624"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}

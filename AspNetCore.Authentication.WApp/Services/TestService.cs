@@ -1,8 +1,6 @@
 ﻿using AspNetCore.Authentication.WApp.Services.Clients;
-using Refit;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AspNetCore.Authentication.WApp.Services
@@ -24,12 +22,17 @@ namespace AspNetCore.Authentication.WApp.Services
 
             try
             {
-                result.AddRange(await _msTwo.GetValues());
-                result.AddRange(await _msThree.GetValues());
+                var t1 = _msTwo.GetValues();
+                var t2 = _msThree.GetValues();
+
+                await Task.WhenAll(t1, t2);
+
+                result.AddRange(t1.Result);
+                result.AddRange(t2.Result);
             }
-            catch (ApiException ex)
+            catch (Exception ex)
             {
-                result = new List<string> { $"{ex.Headers.WwwAuthenticate}, {ex.Message}" };
+                result = new List<string> { ex.Message };
             }
 
             return result;
