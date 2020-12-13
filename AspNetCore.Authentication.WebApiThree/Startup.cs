@@ -1,4 +1,5 @@
 ﻿using AspNetCore.KeycloakAuthentication;
+using AspNetCore.KeycloakAuthentication.PolicyRequirements;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +23,7 @@ namespace AspNetCore.Authentication.WebApiThree
             services.AddKeycloakAuthentication(Configuration);
 
             services.AddAuthorization(config => {
-                config.AddPolicy("adm", policy => policy.RequireRole("admin"));
+                config.AddPolicy("adm", policy => policy.RequireResourceRole(new[] { "admin-test" }));
                 config.AddPolicy("test", policy => policy.RequireClaim("system", "test"));
             });
 

@@ -1,6 +1,8 @@
 ﻿using AspNetCore.KeycloakAuthentication.Clients;
 using AspNetCore.KeycloakAuthentication.Handlers;
+using AspNetCore.KeycloakAuthentication.PolicyRequirements.ResourceAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +12,7 @@ using System.Net.Http;
 
 namespace AspNetCore.KeycloakAuthentication
 {
-    public static class KeycloakExtensions
+    public static class Extensions
     {
         /// <summary>
         /// 
@@ -21,7 +23,7 @@ namespace AspNetCore.KeycloakAuthentication
         {
             return host.ConfigureAppConfiguration((_, builder) =>
             {
-                builder.AddJsonFile(KeycloakClientInstallation.FILE, optional: true);
+                builder.AddJsonFile(ClientInstallation.FILE, optional: true);
             });
         }
 
@@ -35,9 +37,9 @@ namespace AspNetCore.KeycloakAuthentication
         /// <returns></returns>
         public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services,
             IConfiguration configuration,
-            Action<KeycloakClientInstallation> options = null)
+            Action<ClientInstallation> options = null)
         {
-            var installation = new KeycloakClientInstallation();
+            var installation = new ClientInstallation();
             configuration.Bind(installation);
             options?.Invoke(installation);
             services.AddSingleton(installation);
@@ -67,6 +69,8 @@ namespace AspNetCore.KeycloakAuthentication
                         x.Validate();
                     });
 
+            services.AddSingleton<IAuthorizationHandler, ResourceAccessRequirement>();
+
             return services;
         }
 
@@ -85,7 +89,9 @@ namespace AspNetCore.KeycloakAuthentication
             where TImplementation : class, TClient
         {
             services.AddSingleton<IKeycloakClient, KeycloakClient>();
-            services.AddTransient<HttpKeycloakAutoSigningHandler>();
+            services.AddSingleton<TokenManager.IManager, TokenManager.Manager>();
+
+            services.AddScoped<HttpKeycloakAutoSigningHandler>();
             return services.AddHttpClient<TClient, TImplementation>(x => config?.Invoke(x))
                            .AddHttpMessageHandler<HttpKeycloakAutoSigningHandler>();
         }

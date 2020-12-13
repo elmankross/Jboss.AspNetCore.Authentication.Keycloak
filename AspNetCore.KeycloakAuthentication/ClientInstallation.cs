@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace AspNetCore.KeycloakAuthentication
 {
-    public class KeycloakClientInstallation
+    public class ClientInstallation
     {
         /// <summary>
         /// Default client's installation's file
@@ -78,7 +78,7 @@ namespace AspNetCore.KeycloakAuthentication
         }
 
 
-        public KeycloakClientInstallation()
+        public ClientInstallation()
         {
             Credentials = new KeycloakClientInstallationCredentials();
         }

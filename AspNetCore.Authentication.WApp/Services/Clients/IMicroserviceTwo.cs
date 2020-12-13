@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace AspNetCore.Authentication.WApp.Services.Clients
 {
-    public interface IMicroserviceTwo
+    public interface IMicroserviceTwo : IMicroservice
     {
-        Task<IEnumerable<string>> GetValues();
     }
 
 
@@ -20,7 +19,7 @@ namespace AspNetCore.Authentication.WApp.Services.Clients
             _client = client;
         }
 
-        public async Task<IEnumerable<string>> GetValues()
+        public async ValueTask<List<string>> GetValuesAsync()
         {
             var stream = await _client.GetStreamAsync("api/values");
             var payload = await JsonSerializer.DeserializeAsync<List<string>>(stream);

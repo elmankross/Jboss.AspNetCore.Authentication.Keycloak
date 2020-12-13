@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -22,7 +23,7 @@ namespace AspNetCore.KeycloakAuthentication.Clients
     public class KeycloakClient : IKeycloakClient
     {
         private readonly HttpClient _httpClient;
-        private readonly KeycloakClientInstallation _installation;
+        private readonly ClientInstallation _installation;
 
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace AspNetCore.KeycloakAuthentication.Clients
         /// </summary>
         /// <param name="httpClient"></param>
         /// <param name="installation"></param>
-        public KeycloakClient(HttpClient httpClient, KeycloakClientInstallation installation)
+        public KeycloakClient(HttpClient httpClient, ClientInstallation installation)
         {
             _httpClient = httpClient;
             _installation = installation;
@@ -117,7 +118,11 @@ namespace AspNetCore.KeycloakAuthentication.Clients
         private async ValueTask<TResponse> ExecuteAsync<TResponse>(HttpRequestMessage request)
         {
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                throw new Exception(content);
+            }
             var stream = await response.Content.ReadAsStreamAsync();
             var payload = await JsonSerializer.DeserializeAsync<TResponse>(stream);
             return payload;
