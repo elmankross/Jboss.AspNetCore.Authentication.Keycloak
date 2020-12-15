@@ -1,14 +1,14 @@
 ﻿# Description
 
 Keycloak authentication extension (auth adapter) with predefined configuration and authorization policies requirements.
-It's simplify integration with auth service, all you needs it's just drop the installation keycloak client's file in
-(`keycloak.json`) root application folder.
+It's simplify integration with auth service, all you needs it's just drop the installation keycloak client's file
+(`keycloak.json`) in root application folder.
 
 ## Setup
 
 ### Authentication
 
-1. Allow to application read client installation file from the root directory
+1. Allow to application reads client installation file from the root directory
 
 ```
 public class Program

@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  keycloak:
+     image: jboss/keycloak:11.0.3
+
+  web:
+    image: ${DOCKER_REGISTRY-}web
+    build:
+      context: .
+      dockerfile: Example/Web/Dockerfile
+    depends_on:
+      - keycloak
+      - api-first
+      - api-second
+
+  api-first:
+    image: ${DOCKER_REGISTRY-}api-first
+    build:
+      context: .
+      dockerfile: Example/ApiFirst/Dockerfile
+
+  api-second:
+    image: ${DOCKER_REGISTRY-}api-second
+    build:
+      context: .
+      dockerfile: Example/ApiSecond/Dockerfile

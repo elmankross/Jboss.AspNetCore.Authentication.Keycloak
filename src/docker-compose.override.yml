@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  keycloak:
+    volumes: 
+      - ./Example/Keycloak:/tmp
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - KEYCLOAK_IMPORT=/tmp/test-realm.json -Dkeycloak.profile.feature.upload_scripts=enabled
+    ports:
+      - "8080:8080"
+
+  web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - SERVICES__FIRST=http://api-first:80
+      - SERVICES__SECOND=http://api-second:80
+      - KEYCLOAK__AUTHSERVERURL=http://keycloak:8080/auth/
+    ports:
+      - "5080:80"
+
+  api-first:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - KEYCLOAK__AUTHSERVERURL=http://keycloak:8080/auth/
+
+  api-second:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - KEYCLOAK__AUTHSERVERURL=http://keycloak:8080/auth/

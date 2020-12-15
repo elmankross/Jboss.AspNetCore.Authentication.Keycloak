@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>Microsoft.AspNetCore.Authentication.Keycloak</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>elmankross</Authors>
+    <Company></Company>
+    <TargetFramework>net5.0</TargetFramework>
+    <Description>Keycloak adapter for Asp net core projects with functionality of authentication, authorization and policy building.</Description>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Microsoft.AspNetCore.Authentication.Keycloak</Product>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>dotnet, keycloak, authentication, authorization</PackageTags>
+    <RepositoryUrl>https://github.com/elmankross/Microsoft.AspNetCore.Authentication.Keycloak</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/elmankross/Microsoft.AspNetCore.Authentication.Keycloak</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>
