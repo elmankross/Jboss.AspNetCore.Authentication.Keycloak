@@ -26,6 +26,5 @@ jobs:
         uses: rohith/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: src/Microsoft.AspNetCore.Authentication.Keycloak/Microsoft.AspNetCore.Authentication.Keycloak.csproj
-          PACKAGE_NAME: AspNetCore.Authentication.Keycloak
           NUGET_KEY: ${{secrets.NUGET_SECRET}}
           NUGET_SOURCE: https://api.nuget.org
