@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: |
+          git fetch --unshallow
+          git fetch --all
 
       # - name: Setup dotnet
       #   uses: actions/setup-dotnet@v1
@@ -17,7 +20,7 @@ jobs:
       #     dotnet-version: 3.1.200
 
       # Publish
-      - name: Publish on version change
+      - name: Publish 
         id: publish_nuget
         uses: rohith/publish-nuget@v2
         with:
