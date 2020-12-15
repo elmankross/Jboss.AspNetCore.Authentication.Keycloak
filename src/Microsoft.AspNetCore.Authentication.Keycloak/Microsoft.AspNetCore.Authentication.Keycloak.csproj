@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>Microsoft.AspNetCore.Authentication.Keycloak</PackageId>
+    <PackageId>Jboss.AspNetCore.Authentication.Keycloak</PackageId>
     <Version>1.0.0</Version>
     <Authors>elmankross</Authors>
     <Company></Company>
@@ -9,7 +9,7 @@
     <Description>Keycloak adapter for Asp net core projects with functionality of authentication, authorization and policy building.</Description>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
-    <Product>Microsoft.AspNetCore.Authentication.Keycloak</Product>
+    <Product>Jboss.AspNetCore.Authentication.Keycloak.0.1.0</Product>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dotnet, keycloak, authentication, authorization</PackageTags>
     <RepositoryUrl>https://github.com/elmankross/Microsoft.AspNetCore.Authentication.Keycloak</RepositoryUrl>
