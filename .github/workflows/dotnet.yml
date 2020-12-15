@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          git fetch --tags
+          git fetch --all
       
       - name: Setup .NET 5
         uses: actions/setup-dotnet@v1
