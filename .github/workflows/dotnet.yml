@@ -10,6 +10,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/Microsoft.AspNetCore.Authentication.Keycloak
 
     steps:
       - uses: actions/checkout@v2
@@ -20,4 +23,4 @@ jobs:
           dotnet-version: 5.0.100
           
       - name: Build
-        run: dotnet build Microsoft.AspNetCore.Authentication.Keycloak --configuration Release  
+        run: dotnet build --configuration Release  
