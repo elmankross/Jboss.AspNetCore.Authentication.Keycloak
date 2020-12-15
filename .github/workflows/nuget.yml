@@ -1,0 +1,27 @@
+name: Publish NuGet
+on:
+  push:
+    branches:
+      - master
+        - 
+jobs:
+  publish:
+    name: build, pack & publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Setup dotnet
+      #   uses: actions/setup-dotnet@v1
+      #   with:
+      #     dotnet-version: 3.1.200
+
+      # Publish
+      - name: Publish on version change
+        id: publish_nuget
+        uses: rohith/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: Microsoft.AspNetCore.Authentication.Keycloak/Microsoft.AspNetCore.Authentication.Keycloak.csproj
+          PACKAGE_NAME: Microsoft.AspNetCore.Authentication.Keycloak
+          NUGET_KEY: ${{secrets.NUGET_KEY}}
+          NUGET_SOURCE: https://api.nuget.org
