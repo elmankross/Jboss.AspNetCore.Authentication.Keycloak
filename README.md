@@ -10,7 +10,7 @@ It's simplify integration with auth service, all you needs it's just drop the in
 
 1. Allow to application reads client installation file from the root directory
 
-```
+```csharp
 public class Program
 {
     public static void Main(string[] args)
@@ -28,7 +28,7 @@ public class Program
 
 2. Add Keycloak authentication functionality and authorization policies
 
-```
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {  
     // New line 
@@ -51,7 +51,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 1. Do first step from `Authentication` section
 2. Configure http client
 
-```
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
 
