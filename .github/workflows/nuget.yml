@@ -24,7 +24,7 @@ jobs:
 
       - uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.output.version }} ${{ env.PROJECT_FILE }}
+          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.outputs.version }} ${{ env.PROJECT_FILE }}
 
       - name: Publish to nuget.org
         uses: Rebel028/publish-nuget@v2.6.0
@@ -33,7 +33,7 @@ jobs:
           NUGET_KEY: ${{ secrets.NUGET_SECRET }}
           NUGET_SOURCE: https://api.nuget.org
           TAG_FORMAT: '*'
-          #VERSION_STATIC: ${{ steps.git-version.output.version }}    
+          #VERSION_STATIC: ${{ steps.git-version.outputs.version }}    
           
       - name: Publish to gitHub
         uses: Rebel028/publish-nuget@v2.6.0
@@ -42,4 +42,4 @@ jobs:
           NUGET_KEY: ${{ secrets.SECRET }}
           NUGET_SOURCE: https://nuget.pkg.github.com/elmankross
           TAG_FORMAT: '*'
-          #VERSION_STATIC: ${{ steps.git-version.output.version }}
+          #VERSION_STATIC: ${{ steps.git-version.outputs.version }}
