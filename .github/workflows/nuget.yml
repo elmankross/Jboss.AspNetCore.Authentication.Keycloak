@@ -32,6 +32,7 @@ jobs:
           PROJECT_FILE_PATH: ${{ env.PROJECT_FILE }}
           NUGET_KEY: ${{ secrets.NUGET_SECRET }}
           NUGET_SOURCE: https://api.nuget.org
+          TAG_FORMAT: '*'
           #VERSION_STATIC: ${{ steps.git-version.output.version }}    
           
       - name: Publish to gitHub
@@ -40,4 +41,5 @@ jobs:
           PROJECT_FILE_PATH: ${{ env.PROJECT_FILE }}
           NUGET_KEY: ${{ secrets.SECRET }}
           NUGET_SOURCE: https://nuget.pkg.github.com/elmankross
+          TAG_FORMAT: '*'
           #VERSION_STATIC: ${{ steps.git-version.output.version }}
