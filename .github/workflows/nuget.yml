@@ -22,9 +22,14 @@ jobs:
         id: git-version
         uses: codacy/git-version@2.2.0
 
-      - uses: Mudlet/xmlstarlet-action@master
-        with:
-          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.outputs.version }} ${{ env.PROJECT_FILE }}
+#      - uses: Mudlet/xmlstarlet-action@master
+#        with:
+#          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.outputs.version }} ${{ env.PROJECT_FILE }}
+
+      # HACH because of https://github.com/brandedoutcast/publish-nuget/issues/46
+      - shell: bash
+        run: |
+          ${{ steps.git-version.outputs.version }} > version.txt
 
       - name: Publish to nuget.org
         uses: Rebel028/publish-nuget@v2.6.0
@@ -33,6 +38,8 @@ jobs:
           NUGET_KEY: ${{ secrets.NUGET_SECRET }}
           NUGET_SOURCE: https://api.nuget.org
           TAG_FORMAT: '*'
+          VERSION_FILE_PATH: version.txt
+          VERSION_REGEX: ^.+$
           #VERSION_STATIC: ${{ steps.git-version.outputs.version }}    
           
       - name: Publish to gitHub
@@ -42,4 +49,6 @@ jobs:
           NUGET_KEY: ${{ secrets.SECRET }}
           NUGET_SOURCE: https://nuget.pkg.github.com/elmankross
           TAG_FORMAT: '*'
+          VERSION_FILE_PATH: version.txt
+          VERSION_REGEX: ^.+$
           #VERSION_STATIC: ${{ steps.git-version.outputs.version }}
