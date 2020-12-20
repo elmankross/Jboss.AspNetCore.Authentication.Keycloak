@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: src/Microsoft.AspNetCore.Authentication.Keycloak
+        working-directory: src/Jboss.AspNetCore.Authentication.Keycloak
 
     steps:
       - uses: actions/checkout@v2
