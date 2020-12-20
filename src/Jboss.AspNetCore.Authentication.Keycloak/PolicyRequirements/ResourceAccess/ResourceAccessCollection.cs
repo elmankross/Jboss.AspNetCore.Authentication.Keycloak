@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.PolicyRequirements.ResourceAccess
+namespace Jboss.AspNetCore.Authentication.Keycloak.PolicyRequirements.ResourceAccess
 {
     public class ResourceAccessCollection : Dictionary<string, ResourceAccess>
     {

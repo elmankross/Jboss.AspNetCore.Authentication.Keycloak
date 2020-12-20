@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.PolicyRequirements.ResourceAccess
+namespace Jboss.AspNetCore.Authentication.Keycloak.PolicyRequirements.ResourceAccess
 {
     public class ResourceAccessRequirement : AuthorizationHandler<ResourceAccessRequirement>, IAuthorizationRequirement
     {

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Keycloak;
+﻿using Jboss.AspNetCore.Authentication.Keycloak;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

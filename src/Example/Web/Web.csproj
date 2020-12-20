@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.AspNetCore.Authentication.Keycloak\Microsoft.AspNetCore.Authentication.Keycloak.csproj" />
+    <ProjectReference Include="..\..\Jboss.AspNetCore.Authentication.Keycloak\Jboss.AspNetCore.Authentication.Keycloak.csproj" />
   </ItemGroup>
 
   <ItemGroup>

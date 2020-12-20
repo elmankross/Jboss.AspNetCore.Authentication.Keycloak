@@ -11,20 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
-          git fetch --unshallow
-          git fetch --all
+        with:
+          ref: ${{ github.head_ref }}   # checkout the correct branch name
+          fetch-depth: 0                # fetch the whole repo history
 
-      # - name: Setup dotnet
-      #   uses: actions/setup-dotnet@v1
-      #   with:
-      #     dotnet-version: 3.1.200
 
-      # Publish
-      - name: Publish 
-        id: publish_nuget
+      - name: Git Version
+        uses: codacy/git-version@2.2.0
+
+
+      - name: Publish Nuget.org
         uses: rohith/publish-nuget@v2
         with:
-          PROJECT_FILE_PATH: src/Microsoft.AspNetCore.Authentication.Keycloak/Microsoft.AspNetCore.Authentication.Keycloak.csproj
+          PROJECT_FILE_PATH: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
           NUGET_KEY: ${{secrets.NUGET_SECRET}}
           NUGET_SOURCE: https://api.nuget.org
+          
+          
+      - name: Publish GitHub
+        uses: rohith/publish-nuget@v2
+        with:
+          PROJECT_FILE_PATH: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
+          NUGET_KEY: ${{GITHUB_TOKEN}}
+          NUGET_SOURCE: github

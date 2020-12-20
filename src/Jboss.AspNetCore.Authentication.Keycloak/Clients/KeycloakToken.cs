@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.Clients
+namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
 {
     public class KeycloakToken
     {

@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 # Copy csproj and restore as distinct layers
 
 COPY Example/Web/*.csproj ./Example/Web/
-COPY Microsoft.AspNetCore.Authentication.Keycloak/*.csproj ./Microsoft.AspNetCore.Authentication.Keycloak
+COPY Jboss.AspNetCore.Authentication.Keycloak/*.csproj ./Jboss.AspNetCore.Authentication.Keycloak
 RUN dotnet restore Example/Web/Web.csproj
 
 # Copy everything else and build

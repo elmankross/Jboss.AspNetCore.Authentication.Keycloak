@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.Clients
+namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
 {
     /// <summary>
     /// 

@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Net.Http;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak
+namespace Jboss.AspNetCore.Authentication.Keycloak
 {
     using Clients;
     using Handlers;
@@ -70,8 +70,7 @@ namespace Microsoft.AspNetCore.Authentication.Keycloak
                             ValidateLifetime = true,
                             ValidateIssuer = true,
                             ValidIssuer = installation.Issuer.ToString(),
-                            ValidateIssuerSigningKey = true,
-                            TryAllIssuerSigningKeys = true
+                            ValidateIssuerSigningKey = true
                         };
 
                         x.Validate();

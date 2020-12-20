@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Keycloak;
+using Jboss.AspNetCore.Authentication.Keycloak;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Web

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.Handlers
+namespace Jboss.AspNetCore.Authentication.Keycloak.Handlers
 {
     public class HttpKeycloakAutoSigningHandler : DelegatingHandler
     {

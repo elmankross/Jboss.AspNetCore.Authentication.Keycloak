@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Keycloak.Clients;
+﻿using Jboss.AspNetCore.Authentication.Keycloak.Clients;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.TokenManager
+namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
 {
     public interface IManager
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.Providers.KeycloakConfiguration
+namespace Jboss.AspNetCore.Authentication.Keycloak.Providers.KeycloakConfiguration
 {
     public class KeycloakConfigurationSource : JsonConfigurationSource
     {

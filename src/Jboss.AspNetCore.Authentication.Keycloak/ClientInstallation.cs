@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak
+namespace Jboss.AspNetCore.Authentication.Keycloak
 {
     public class ClientInstallation
     {

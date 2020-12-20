@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak.Providers.KeycloakConfiguration
+namespace Jboss.AspNetCore.Authentication.Keycloak.Providers.KeycloakConfiguration
 {
     public class KeycloakConfigurationProvider : JsonConfigurationProvider
     {

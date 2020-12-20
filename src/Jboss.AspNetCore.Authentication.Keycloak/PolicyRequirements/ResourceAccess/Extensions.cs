@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Microsoft.AspNetCore.Authentication.Keycloak
+namespace Jboss.AspNetCore.Authentication.Keycloak
 {
     using PolicyRequirements.ResourceAccess;
 
