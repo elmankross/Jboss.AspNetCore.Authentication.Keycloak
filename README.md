@@ -48,7 +48,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ### Autosigning HttpClient
 
-1. Do first step from `Authentication` section
+1. Do first two steps from `Authentication` section
 2. Configure http client
 
 ```csharp
