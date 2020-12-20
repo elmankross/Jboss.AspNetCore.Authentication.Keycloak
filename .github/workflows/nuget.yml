@@ -3,7 +3,10 @@ name: Publish NuGet
 on:
   push:
     branches: [ master ]
-    
+   
+env:
+  PROJECT_FILE: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
+
 jobs:
   publish:
     
@@ -15,29 +18,26 @@ jobs:
           ref: ${{ github.head_ref }}   # checkout the correct branch name
           fetch-depth: 0                # fetch the whole repo history
 
-
       - name: Git Version
         id: git-version
         uses: codacy/git-version@2.2.0
 
+#      - uses: Mudlet/xmlstarlet-action@master
+#        with:
+#          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.output.version }} ${{PROJECT_FILE}}
 
-      - uses: Mudlet/xmlstarlet-action@master
+      - name: Publish to nuget.org
+        uses: Rebel028/publish-nuget@v2.6.0
         with:
-          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.output.version }} 
-            | src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-
-
-      - name: Publish Nuget.org
-        uses: myci-actions/publish-nuget@2
-        with:
-          filename: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-          api-key: ${{ secrets.NUGET_SECRET }}
-          repo-url: https://api.nuget.org/v3/index.json
+          PROJECT_FILE_PATH: ${{PROJECT_FILE}}
+          NUGET_KEY: ${{ secrets.NUGET_SECRET }}
+          NUGET_SOURCE: https://api.nuget.org
+          VERSION_STATIC: ${{ steps.git-version.output.version }}    
           
-          
-      - name: Publish GitHub
-        uses: myci-actions/publish-nuget@2
+      - name: Publish to gitHub
+        uses: Rebel028/publish-nuget@v2.6.0
         with:
-          filename: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-          api-key: ${{ secrets.SECRET }}
-          repo-url: https://nuget.pkg.github.com/elmankross/index.json
+          PROJECT_FILE_PATH: ${{PROJECT_FILE}}
+          NUGET_KEY: ${{ secrets.SECRET }}
+          NUGET_SOURCE: https://nuget.pkg.github.com/elmankross/index.json
+          VERSION_STATIC: ${{ steps.git-version.output.version }}
