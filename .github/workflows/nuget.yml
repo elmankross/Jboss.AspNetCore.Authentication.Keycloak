@@ -27,7 +27,7 @@ jobs:
 #          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.outputs.version }} ${{ env.PROJECT_FILE }}
 
       - name: Publish to nuget.org
-        uses: Rebel028/publish-nuget@v2.6.0
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: ${{ env.PROJECT_FILE }}
           NUGET_KEY: ${{ secrets.NUGET_SECRET }}
