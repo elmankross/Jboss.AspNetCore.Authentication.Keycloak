@@ -17,20 +17,26 @@ jobs:
 
 
       - name: Git Version
+        id: git-version
         uses: codacy/git-version@2.2.0
 
 
-      - name: Publish Nuget.org
-        uses: rohith/publish-nuget@v2
+      - uses: Mudlet/xmlstarlet-action@master
         with:
-          PROJECT_FILE_PATH: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-          NUGET_KEY: ${{ secrets.NUGET_SECRET }}
-          NUGET_SOURCE: https://api.nuget.org
+          args: ed --update /Project//PropertyGroup/Version --value {{ steps.git-version.output.version }}
+
+
+      - name: Publish Nuget.org
+        uses: myci-actions/publish-nuget@2
+        with:
+          filename: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
+          api-key: ${{ secrets.NUGET_SECRET }}
+          repo-url: https://api.nuget.org/v3/index.json
           
           
       - name: Publish GitHub
-        uses: rohith/publish-nuget@v2
+        uses: myci-actions/publish-nuget@2
         with:
-          PROJECT_FILE_PATH: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-          NUGET_KEY: ${{ secrets.SECRET }}
-          NUGET_SOURCE: https://nuget.pkg.github.com/elmankross
+          filename: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
+          api-key: ${{ secrets.SECRET }}
+          repo-url: https://nuget.pkg.github.com/elmankross/index.json
