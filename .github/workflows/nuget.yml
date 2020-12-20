@@ -29,7 +29,7 @@ jobs:
       # HACH because of https://github.com/brandedoutcast/publish-nuget/issues/46
       - shell: bash
         run: |
-          ${{ steps.git-version.outputs.version }} > version.txt
+          echo "${{ steps.git-version.outputs.version }}" > version.txt
 
       - name: Publish to nuget.org
         uses: Rebel028/publish-nuget@v2.6.0
