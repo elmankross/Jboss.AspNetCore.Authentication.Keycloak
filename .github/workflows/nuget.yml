@@ -24,7 +24,7 @@ jobs:
         uses: rohith/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-          NUGET_KEY: ${{secrets.NUGET_SECRET}}
+          NUGET_KEY: ${{ secrets.NUGET_SECRET }}
           NUGET_SOURCE: https://api.nuget.org
           
           
@@ -32,5 +32,5 @@ jobs:
         uses: rohith/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
-          NUGET_KEY: ${{secrets.GITHUB_TOKEN}}
+          NUGET_KEY: ${{ secrets.SECRET }}
           NUGET_SOURCE: https://nuget.pkg.github.com/elmankross
