@@ -39,5 +39,5 @@ jobs:
         with:
           PROJECT_FILE_PATH: ${{ env.PROJECT_FILE }}
           NUGET_KEY: ${{ secrets.SECRET }}
-          NUGET_SOURCE: https://nuget.pkg.github.com/elmankross/index.json
+          NUGET_SOURCE: https://nuget.pkg.github.com/elmankross
           VERSION_STATIC: ${{ steps.git-version.output.version }}
