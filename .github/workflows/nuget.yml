@@ -23,7 +23,8 @@ jobs:
 
       - uses: Mudlet/xmlstarlet-action@master
         with:
-          args: ed --update /Project//PropertyGroup/Version --value {{ steps.git-version.output.version }}
+          args: ed --update /Project//PropertyGroup/Version --value ${{ steps.git-version.output.version }} 
+            | src/Jboss.AspNetCore.Authentication.Keycloak/Jboss.AspNetCore.Authentication.Keycloak.csproj
 
 
       - name: Publish Nuget.org
