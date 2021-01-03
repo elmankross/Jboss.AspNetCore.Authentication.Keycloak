@@ -15,7 +15,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         public static AuthorizationPolicyBuilder RequireResourceRole(this AuthorizationPolicyBuilder builder, string[] roles)
         {
             return builder.RequireClaim(ResourceAccessRequirement.CLAIM_TYPE)
-                .AddRequirements(new ResourceAccessRequirement(roles));
+                          .AddRequirements(new ResourceAccessRequirement(roles));
         }
 
 
@@ -29,7 +29,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         public static AuthorizationPolicyBuilder RequireResourceRole(this AuthorizationPolicyBuilder builder, string resource, string[] roles)
         {
             return builder.RequireClaim(ResourceAccessRequirement.CLAIM_TYPE)
-                .AddRequirements(new ResourceAccessRequirement(resource, roles));
+                          .AddRequirements(new ResourceAccessRequirement(resource, roles));
         }
     }
 }

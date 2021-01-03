@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
 {
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public class KeycloakToken
     {
         [JsonPropertyName("token_type")]
@@ -38,14 +39,14 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
         [JsonIgnore]
         public bool RefreshExpired => _tokenTime.AddSeconds(RefreshExpiresInSeconds) <= DateTime.Now;
 
+        [JsonIgnore]
+        private DateTime RevocationTime => DateTimeOffset.FromUnixTimeSeconds(RevocationUnixTime).DateTime;
+
         /// <summary>
         /// Time when token was been obtained
         /// </summary>
         [JsonIgnore]
-        private DateTime _tokenTime { get; }
-
-        [JsonIgnore]
-        private DateTime _revocationTime => DateTimeOffset.FromUnixTimeSeconds(RevocationUnixTime).DateTime;
+        private DateTime _tokenTime;
 
         [JsonConstructor]
         public KeycloakToken()

@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
 {
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public interface IManager
     {
         Task<HttpRequestMessage> AuthenticateAsync(HttpRequestMessage request);
     }
 
 
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public class Manager : IManager
     {
         private readonly IKeycloakClient _keycloakClient;

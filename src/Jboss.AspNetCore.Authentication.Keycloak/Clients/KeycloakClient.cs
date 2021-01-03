@@ -9,6 +9,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public interface IKeycloakClient
     {
         Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey);
@@ -20,6 +21,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public class KeycloakClient : IKeycloakClient
     {
         private readonly HttpClient _httpClient;
