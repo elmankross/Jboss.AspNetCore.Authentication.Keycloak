@@ -24,7 +24,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Handlers
         /// <returns></returns>
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            request = await _manager.AuthenticateAsync(request);
+            request = await _manager.AuthenticateAsync(request, cancellationToken);
             var response = await base.SendAsync(request, cancellationToken);
             return response;
         }

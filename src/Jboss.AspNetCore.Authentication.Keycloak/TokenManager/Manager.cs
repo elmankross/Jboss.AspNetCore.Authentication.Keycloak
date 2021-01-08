@@ -11,7 +11,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
     [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public interface IManager
     {
-        Task<HttpRequestMessage> AuthenticateAsync(HttpRequestMessage request);
+        Task<HttpRequestMessage> AuthenticateAsync(HttpRequestMessage request, CancellationToken cancellationToken = default);
     }
 
 
@@ -20,13 +20,13 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
     {
         private readonly IKeycloakClient _keycloakClient;
         private readonly ClientInstallation _options;
-        private readonly Semaphore _semaphore;
+        private readonly SemaphoreSlim _semaphore;
         private readonly ILogger _logger;
         private KeycloakToken _token;
 
         public Manager(IKeycloakClient keycloakClient, ClientInstallation options, ILogger<Manager> logger)
         {
-            _semaphore = new Semaphore(1, 1);
+            _semaphore = new SemaphoreSlim(1, 1);
             _keycloakClient = keycloakClient;
             _options = options;
             _logger = logger;
@@ -36,7 +36,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
         /// 
         /// </summary>
         /// <param name="request"></param>
-        public async Task<HttpRequestMessage> AuthenticateAsync(HttpRequestMessage request)
+        /// <param name="cancellationToken"></param>
+        public async Task<HttpRequestMessage> AuthenticateAsync(HttpRequestMessage request, CancellationToken cancellationToken = default)
         {
             _logger.LogDebug("Starting authenticating the request...");
 
@@ -46,7 +47,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
                 try
                 {
                     _logger.LogTrace("Entering in lock section...");
-                    _semaphore.WaitOne();
+                    await _semaphore.WaitAsync(cancellationToken);
                     _logger.LogTrace("Entered in lock section.");
 
                     // Ok. Needs a token but we have no one. Obtaining it...
@@ -55,7 +56,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
                         _logger.LogDebug("No token found. Obtaining it with credentials...");
                         _token = await _keycloakClient.GetClientTokenAsync(
                             _options.Resource,
-                            _options.Credentials.Secret);
+                            _options.Credentials.Secret,
+                            cancellationToken);
                         _logger.LogDebug("Token was been obtained.");
                     }
                     // Access token was died and refresh token is not. So we need one more access token
@@ -65,7 +67,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
                         _token = await _keycloakClient.GetClientTokenAsync(
                             _options.Resource,
                             _options.Credentials.Secret,
-                            _token.RefreshToken);
+                            _token.RefreshToken,
+                            cancellationToken);
                         _logger.LogDebug("New acces token was been obtained.");
                     }
                     // Both tokens died. Needs try again from the start
@@ -74,7 +77,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.TokenManager
                         _logger.LogDebug("Access token and refresh token died. Obtaining it with credentials...");
                         _token = await _keycloakClient.GetClientTokenAsync(
                             _options.Resource,
-                            _options.Credentials.Secret);
+                            _options.Credentials.Secret,
+                            cancellationToken);
                         _logger.LogDebug("Token was been obtained.");
                     }
                 }
