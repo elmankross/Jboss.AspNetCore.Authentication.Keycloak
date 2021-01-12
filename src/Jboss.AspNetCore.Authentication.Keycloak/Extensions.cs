@@ -17,6 +17,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
     public static class Extensions
     {
         private static ClientInstallation _installation = new ClientInstallation();
+        private static bool _installationRegistered = false;
 
         /// <summary>
         /// 
@@ -25,6 +26,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// <returns></returns>
         public static IWebHostBuilder UseKeycloak(this IWebHostBuilder host)
         {
+            _installationRegistered = true;
             return host.ConfigureAppConfiguration((_, builder) =>
             {
                 var source = new KeycloakConfigurationSource
@@ -48,6 +50,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// <returns></returns>
         public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services)
         {
+            EnsureInstallationRegistered();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(x =>
                     {
@@ -86,6 +90,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// <returns></returns>
         public static IHttpClientBuilder AddKeycloakSupport(this IHttpClientBuilder builder)
         {
+            EnsureInstallationRegistered();
+
             builder.Services.AddSingleton<IKeycloakClient, KeycloakClient>();
             builder.Services.AddSingleton<TokenManager.IManager, TokenManager.Manager>();
             builder.Services.AddScoped<HttpKeycloakAutoSigningHandler>();
@@ -108,6 +114,8 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
             where TClient : class
             where TImplementation : class, TClient
         {
+            EnsureInstallationRegistered();
+
             services.AddSingleton<IKeycloakClient, KeycloakClient>();
             services.AddSingleton<TokenManager.IManager, TokenManager.Manager>();
 
@@ -129,9 +137,23 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
             Action<HttpClient> config = null)
             where TImplementation : class
         {
+            EnsureInstallationRegistered();
+
             services.AddSingleton<IKeycloakClient, KeycloakClient>();
             return services.AddHttpClient<TImplementation>(x => config?.Invoke(x))
                            .AddHttpMessageHandler<HttpKeycloakAutoSigningHandler>();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void EnsureInstallationRegistered()
+        {
+            if (!_installationRegistered)
+            {
+                throw new Exception("It needs to use .UseKeycloak() on IWebHostBuilder before.");
+            }
         }
     }
 }
