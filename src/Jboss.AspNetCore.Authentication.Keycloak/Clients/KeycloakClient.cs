@@ -13,7 +13,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
     [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public interface IKeycloakClient
     {
-        Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, 
+        Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey,
             CancellationToken cancellationToken = default);
         Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, string refreshToken,
             CancellationToken cancellationToken = default);
@@ -133,10 +133,20 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
             var response = await _httpClient.SendAsync(request, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
+#if NETCOREAPP3_1
+                var content = await response.Content.ReadAsStringAsync();
+#endif
+#if NET5_0
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
+#endif
                 throw new Exception(content);
             }
+#if NETCOREAPP3_1
+            var stream = await response.Content.ReadAsStreamAsync();
+#endif
+#if NET5_0
             var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+#endif
             var payload = await JsonSerializer.DeserializeAsync<TResponse>(stream, cancellationToken: cancellationToken);
             return payload;
         }
