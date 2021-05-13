@@ -23,15 +23,15 @@ namespace Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddKeycloakAuthentication(Configuration);
-
             var uri1 = Configuration.GetValue<Uri>("Services:First");
             var uri2 = Configuration.GetValue<Uri>("Services:Second");
 
             services.AddTransient<ITestService, TestService>();
 
-            services.AddKeycloakHttpClient<IMicroserviceFirst, MicroserviceFirst>(c => c.BaseAddress = uri1);
-            services.AddKeycloakHttpClient<IMicroserviceSecond, MicroserviceSecond>(c => c.BaseAddress = uri2);
+            services.AddHttpClient<IMicroserviceFirst, MicroserviceFirst>(c => c.BaseAddress = uri1)
+                    .AddKeycloakSupport();
+            services.AddHttpClient<IMicroserviceSecond, MicroserviceSecond>(c => c.BaseAddress = uri2)
+                    .AddKeycloakSupport();
 
             services.AddControllers();
         }

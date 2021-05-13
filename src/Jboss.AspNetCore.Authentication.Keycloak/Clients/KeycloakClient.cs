@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
@@ -9,17 +10,22 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public interface IKeycloakClient
     {
-        Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey);
-        Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, string refreshToken);
-        Task<KeycloakToken> GetUserTokenAsync(string userName, string password, string clientId, string secretKey);
+        Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, 
+            CancellationToken cancellationToken = default);
+        Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, string refreshToken,
+            CancellationToken cancellationToken = default);
+        Task<KeycloakToken> GetUserTokenAsync(string userName, string password, string clientId, string secretKey,
+            CancellationToken cancellationToken = default);
     }
 
 
     /// <summary>
     /// 
     /// </summary>
+    [Obsolete("It will be incapsulated in the next release. Don't use this reference.")]
     public class KeycloakClient : IKeycloakClient
     {
         private readonly HttpClient _httpClient;
@@ -43,8 +49,10 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
         /// </summary>
         /// <param name="clientId"></param>
         /// <param name="secretKey"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey)
+        public Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey,
+            CancellationToken cancellationToken = default)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _installation.TokenEndpoint)
             {
@@ -56,7 +64,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
                 })
             };
 
-            return ExecuteAsync<KeycloakToken>(request);
+            return ExecuteAsync<KeycloakToken>(request, cancellationToken);
         }
 
 
@@ -66,8 +74,10 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
         /// <param name="clientId"></param>
         /// <param name="secretKey"></param>
         /// <param name="refreshToken"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, string refreshToken)
+        public Task<KeycloakToken> GetClientTokenAsync(string clientId, string secretKey, string refreshToken,
+            CancellationToken cancellationToken = default)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _installation.TokenEndpoint)
             {
@@ -80,7 +90,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
                 })
             };
 
-            return ExecuteAsync<KeycloakToken>(request);
+            return ExecuteAsync<KeycloakToken>(request, cancellationToken);
         }
 
 
@@ -91,8 +101,10 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
         /// <param name="password"></param>
         /// <param name="clientId"></param>
         /// <param name="secretKey"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task<KeycloakToken> GetUserTokenAsync(string userName, string password, string clientId, string secretKey)
+        public Task<KeycloakToken> GetUserTokenAsync(string userName, string password, string clientId, string secretKey,
+            CancellationToken cancellationToken = default)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, _installation.TokenEndpoint)
             {
@@ -106,7 +118,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
                 })
             };
 
-            return ExecuteAsync<KeycloakToken>(request);
+            return ExecuteAsync<KeycloakToken>(request, cancellationToken);
         }
 
 
@@ -114,17 +126,18 @@ namespace Jboss.AspNetCore.Authentication.Keycloak.Clients
         /// 
         /// </summary>
         /// <param name="request"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        private async Task<TResponse> ExecuteAsync<TResponse>(HttpRequestMessage request)
+        private async Task<TResponse> ExecuteAsync<TResponse>(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var response = await _httpClient.SendAsync(request);
+            var response = await _httpClient.SendAsync(request, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new Exception(content);
             }
-            var stream = await response.Content.ReadAsStreamAsync();
-            var payload = await JsonSerializer.DeserializeAsync<TResponse>(stream);
+            var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+            var payload = await JsonSerializer.DeserializeAsync<TResponse>(stream, cancellationToken: cancellationToken);
             return payload;
         }
     }

@@ -32,7 +32,7 @@ public class Program
 public void ConfigureServices(IServiceCollection services)
 {  
     // New line 
-    services.AddKeycloakAuthentication(Configuration);
+    services.AddKeycloakAuthentication();
 
     services.AddAuthorization(config => /* ... */);
 }
@@ -48,19 +48,19 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 ### Autosigning HttpClient
 
-1. Do first two steps from `Authentication` section
+1. Do first step from `Authentication` section
 2. Configure http client
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-
-    services.AddKeycloakHttpClient<IMicroserviceTwo, MicroserviceTwo>(c => { /* ... */ });
-    services.AddKeycloakHttpClient<IMicroserviceThree, MicroserviceThree>(c => { /* ... */ });
+    services.AddHttpClient<IMicroserviceFirst, MicroserviceFirst>()
+            // new line
+            .AddKeycloakSupport();
 }
 ```
 
-3. Done. Just invoke `IMicroserviceTwo` or `IMicroserviceThree` whenever and don't think about auth tokens.
+3. Done. Just invoke `IMicroserviceFirst` whenever you want and don't think about auth tokens.
 
 # Features
 1. Authentication with autosetup through `keycloak.json` file
@@ -69,5 +69,5 @@ public void ConfigureServices(IServiceCollection services)
    3.1. `ResourceAccess` - allows to check roles from different resources
 
 # TODO
-[ ] More predefined policy requirements  
-[ ] Importing Authorization configuration from Keycloak ([service-id]-authz-config.json)
+- [ ] More predefined policy requirements  
+- [ ] Importing Authorization configuration from Keycloak ([service-id]-authz-config.json)

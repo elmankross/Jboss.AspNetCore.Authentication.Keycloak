@@ -16,6 +16,9 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
 
     public static class Extensions
     {
+        private static ClientInstallation _installation = new ClientInstallation();
+        private static bool _installationRegistered = false;
+
         /// <summary>
         /// 
         /// </summary>
@@ -23,6 +26,7 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// <returns></returns>
         public static IWebHostBuilder UseKeycloak(this IWebHostBuilder host)
         {
+            _installationRegistered = true;
             return host.ConfigureAppConfiguration((_, builder) =>
             {
                 var source = new KeycloakConfigurationSource
@@ -31,6 +35,10 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
                     Optional = false
                 };
                 builder.Sources.Insert(0, source);
+            }).ConfigureServices((builder, services) =>
+            {
+                builder.Configuration.Bind(KeycloakConfigurationProvider.CONFIGURATION_PREFIX, _installation);
+                services.AddSingleton(_installation);
             });
         }
 
@@ -39,22 +47,15 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// 
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="configuration"></param>
-        /// <param name="options"></param>
         /// <returns></returns>
-        public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services,
-            IConfiguration configuration,
-            Action<ClientInstallation> options = null)
+        public static IServiceCollection AddKeycloakAuthentication(this IServiceCollection services)
         {
-            var installation = new ClientInstallation();
-            configuration.Bind(KeycloakConfigurationProvider.CONFIGURATION_PREFIX, installation);
-            options?.Invoke(installation);
-            services.AddSingleton(installation);
+            EnsureInstallationRegistered();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(x =>
                     {
-                        x.Authority = installation.Issuer.ToString();
+                        x.Authority = _installation.Issuer.ToString();
                         x.SaveToken = true;
 
                         // TODO: By env
@@ -65,11 +66,11 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
                         x.TokenValidationParameters = new TokenValidationParameters
                         {
                             RequireSignedTokens = false,
-                            ValidateAudience = installation.VerifyTokenAudience,
-                            ValidAudience = installation.Resource,
+                            ValidateAudience = _installation.VerifyTokenAudience,
+                            ValidAudience = _installation.Resource,
                             ValidateLifetime = true,
                             ValidateIssuer = true,
-                            ValidIssuer = installation.Issuer.ToString(),
+                            ValidIssuer = _installation.Issuer.ToString(),
                             ValidateIssuerSigningKey = true
                         };
 
@@ -85,16 +86,36 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="builder"></param>
+        /// <returns></returns>
+        public static IHttpClientBuilder AddKeycloakSupport(this IHttpClientBuilder builder)
+        {
+            EnsureInstallationRegistered();
+
+            builder.Services.AddSingleton<IKeycloakClient, KeycloakClient>();
+            builder.Services.AddSingleton<TokenManager.IManager, TokenManager.Manager>();
+            builder.Services.AddScoped<HttpKeycloakAutoSigningHandler>();
+
+            return builder.AddHttpMessageHandler<HttpKeycloakAutoSigningHandler>();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <typeparam name="TClient"></typeparam>
         /// <typeparam name="TImplementation"></typeparam>
         /// <param name="services"></param>
         /// <param name="config"></param>
         /// <returns></returns>
+        [Obsolete("Use .AddKeycloakSupport() on .AddHttpClient<,> instead.")]
         public static IHttpClientBuilder AddKeycloakHttpClient<TClient, TImplementation>(this IServiceCollection services,
             Action<HttpClient> config = null)
             where TClient : class
             where TImplementation : class, TClient
         {
+            EnsureInstallationRegistered();
+
             services.AddSingleton<IKeycloakClient, KeycloakClient>();
             services.AddSingleton<TokenManager.IManager, TokenManager.Manager>();
 
@@ -111,13 +132,28 @@ namespace Jboss.AspNetCore.Authentication.Keycloak
         /// <param name="services"></param>
         /// <param name="config"></param>
         /// <returns></returns>
+        [Obsolete("Use .AddKeycloakSupport() on .AddHttpClient<,> instead.")]
         public static IHttpClientBuilder AddKeycloakHttpClient<TImplementation>(this IServiceCollection services,
             Action<HttpClient> config = null)
             where TImplementation : class
         {
+            EnsureInstallationRegistered();
+
             services.AddSingleton<IKeycloakClient, KeycloakClient>();
             return services.AddHttpClient<TImplementation>(x => config?.Invoke(x))
                            .AddHttpMessageHandler<HttpKeycloakAutoSigningHandler>();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        private static void EnsureInstallationRegistered()
+        {
+            if (!_installationRegistered)
+            {
+                throw new Exception("It needs to use .UseKeycloak() on IWebHostBuilder before.");
+            }
         }
     }
 }
