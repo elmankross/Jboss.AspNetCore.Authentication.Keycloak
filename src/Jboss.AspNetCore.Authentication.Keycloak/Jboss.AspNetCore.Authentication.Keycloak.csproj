@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Jboss.AspNetCore.Authentication.Keycloak</PackageId>
-    <Version>1.0.3</Version>
+    <Version>2.0.0</Version>
     <Authors>elmankross</Authors>
     <Company></Company>
     <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
